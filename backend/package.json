@@ -1,43 +1,35 @@
 {
   "name": "slimrx-backend",
   "version": "1.0.0",
-  "description": "SlimRx - GLP-1 Telehealth Platform Backend API",
+  "description": "SlimRx GLP-1 Telehealth Platform Backend",
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "tsx src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js"
   },
   "keywords": [
-    "glp-1",
     "telehealth",
-    "weight-loss"
+    "glp1",
+    "fastify",
+    "typescript",
+    "razorpay"
   ],
   "author": "SlimRx Team",
-  "license": "MIT",
+  "license": "ISC",
   "dependencies": {
-    "@fastify/cors": "^11.2.0",
-    "@fastify/helmet": "^11.1.0",
-    "@fastify/jwt": "^10.1.0",
-    "@prisma/client": "^7.8.0",
-    "cors": "^2.8.6",
-    "dotenv": "^16.6.1",
-    "express": "^5.2.1",
-    "fastify": "^5.8.5",
-    "pino": "^8.17.0",
-    "pino-pretty": "^10.2.3"
+    "fastify": "^4.25.2",
+    "@fastify/cors": "^8.5.0",
+    "razorpay": "^2.9.1",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/node": "^20.10.0",
-    "prisma": "^6.19.3",
-    "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5",
+    "tsx": "^4.7.0"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=9.0.0"
+    "node": ">=18.0.0"
   }
 }
