@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Login } from "./components/Login";
+import { Login } from "./components/login";
 import { DoctorSearch } from "./components/DoctorSearch";
 import { DoctorDetails } from "./components/DoctorDetails";
 import { PatientProfile } from "./components/PatientProfile";
