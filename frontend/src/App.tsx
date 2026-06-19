@@ -1,96 +1,126 @@
-import { useState } from "react";
-import { Login } from "./components/Login";
-import { DoctorSearch } from "./components/DoctorSearch";
-import { DoctorDetails } from "./components/DoctorDetails";
-import { PatientProfile } from "./components/PatientProfile";
-import { ConsultationHistory } from "./components/ConsultationHistory";
-import { WeightLogging } from "./components/WeightLogging";
-import { PrescriptionsOrders } from "./components/PrescriptionsOrders";
-import "./App.css";
+import { useState } from 'react';
+import './App.css';
 
-function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [currentPage, setCurrentPage] = useState<string>("doctors");
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string | null>(null);
+// Import components - CORRECT CASE
+import Login from './components/login';
+import DoctorSearch from './components/DoctorSearch';
+import DoctorDetails from './components/DoctorDetails';
+import Payment from './components/Payment';
+import PatientProfile from './components/PatientProfile';
+import ConsultationHistory from './components/ConsultationHistory';
+import PrescriptionsOrders from './components/PrescriptionsOrders';
+import WeightLogging from './components/WeightLogging';
 
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<string>('login');
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [showPayment, setShowPayment] = useState<boolean>(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setCurrentPage('home');
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage('login');
+    setSelectedDoctor(null);
+  };
+
+  const handleDoctorSelect = (doctor: any) => {
+    setSelectedDoctor(doctor);
+    setCurrentPage('doctorDetails');
+  };
+
+  const handleBooking = () => {
+    setShowPayment(true);
+    setCurrentPage('payment');
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPayment(false);
+    setCurrentPage('consultationHistory');
+  };
+
+  // Not logged in - show login
   if (!isLoggedIn) {
-    return <Login onSuccess={() => setIsLoggedIn(true)} />;
+    return <Login onLogin={handleLogin} />;
   }
 
+  // Logged in - show navbar and pages
   return (
-    <div className="App">
-      <div className="navbar">
-        <h1 className="logo">SlimRx</h1>
-        <div className="nav-links">
-          <button
-            className={currentPage === "doctors" ? "active" : ""}
-            onClick={() => {
-              setCurrentPage("doctors");
-              setSelectedDoctorId(null);
-            }}
+    <div className="app-container">
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="navbar-brand">SlimRx</div>
+        <div className="navbar-menu">
+          <button 
+            className={currentPage === 'home' ? 'nav-btn active' : 'nav-btn'}
+            onClick={() => setCurrentPage('home')}
           >
-            🏥 Doctors
+            Doctor Search
           </button>
-          <button
-            className={currentPage === "profile" ? "active" : ""}
-            onClick={() => setCurrentPage("profile")}
+          <button 
+            className={currentPage === 'profile' ? 'nav-btn active' : 'nav-btn'}
+            onClick={() => setCurrentPage('profile')}
           >
-            👤 Profile
+            My Profile
           </button>
-          <button
-            className={currentPage === "consultations" ? "active" : ""}
-            onClick={() => setCurrentPage("consultations")}
+          <button 
+            className={currentPage === 'consultationHistory' ? 'nav-btn active' : 'nav-btn'}
+            onClick={() => setCurrentPage('consultationHistory')}
           >
-            📋 Consultations
+            Consultations
           </button>
-          <button
-            className={currentPage === "weight" ? "active" : ""}
-            onClick={() => setCurrentPage("weight")}
+          <button 
+            className={currentPage === 'prescriptions' ? 'nav-btn active' : 'nav-btn'}
+            onClick={() => setCurrentPage('prescriptions')}
           >
-            ⚖️ Weight
+            Prescriptions
           </button>
-          <button
-            className={currentPage === "prescriptions" ? "active" : ""}
-            onClick={() => setCurrentPage("prescriptions")}
+          <button 
+            className={currentPage === 'weight' ? 'nav-btn active' : 'nav-btn'}
+            onClick={() => setCurrentPage('weight')}
           >
-            💊 Prescriptions
+            Weight Log
           </button>
-          <button
-            onClick={() => {
-              localStorage.removeItem("access_token");
-              setIsLoggedIn(false);
-            }}
-          >
-            🚪 Logout
+          <button className="nav-btn logout" onClick={handleLogout}>
+            Logout
           </button>
         </div>
-      </div>
+      </nav>
 
-      <div className="page-content">
-        {selectedDoctorId ? (
-          <DoctorDetails
-            doctorId={selectedDoctorId}
-            onBack={() => setSelectedDoctorId(null)}
-            onBooked={() => {
-              alert("Consultation booked! Check your consultations");
-              setCurrentPage("consultations");
-              setSelectedDoctorId(null);
-            }}
-          />
-        ) : currentPage === "doctors" ? (
-          <DoctorSearch onDoctorSelect={(id) => setSelectedDoctorId(id)} />
-        ) : currentPage === "profile" ? (
-          <PatientProfile onNavigate={(page) => setCurrentPage(page)} />
-        ) : currentPage === "consultations" ? (
-          <ConsultationHistory onBack={() => setCurrentPage("doctors")} />
-        ) : currentPage === "weight" ? (
-          <WeightLogging onBack={() => setCurrentPage("doctors")} />
-        ) : currentPage === "prescriptions" ? (
-          <PrescriptionsOrders onBack={() => setCurrentPage("doctors")} />
-        ) : null}
-      </div>
+      {/* Page Content */}
+      <main className="main-content">
+        {currentPage === 'home' && (
+          <DoctorSearch onSelectDoctor={handleDoctorSelect} />
+        )}
+
+        {currentPage === 'doctorDetails' && selectedDoctor && (
+          <DoctorDetails doctor={selectedDoctor} onBooking={handleBooking} />
+        )}
+
+        {currentPage === 'payment' && showPayment && (
+          <Payment onSuccess={handlePaymentSuccess} />
+        )}
+
+        {currentPage === 'profile' && (
+          <PatientProfile />
+        )}
+
+        {currentPage === 'consultationHistory' && (
+          <ConsultationHistory />
+        )}
+
+        {currentPage === 'prescriptions' && (
+          <PrescriptionsOrders />
+        )}
+
+        {currentPage === 'weight' && (
+          <WeightLogging />
+        )}
+      </main>
     </div>
   );
 }
-
-export default App;
