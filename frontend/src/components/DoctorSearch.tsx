@@ -1,47 +1,46 @@
-import { useState, useEffect } from "react";
-import { doctorAPI } from "../api";
-import "./DoctorSearch.css";
+import { useState, useEffect } from 'react';
+import './DoctorSearch.css';
 
-interface DoctorSearchProps {
-  onDoctorSelect: (doctorId: string) => void;
-}
-
-export const DoctorSearch = ({ onDoctorSelect }: DoctorSearchProps) => {
+export default function DoctorSearch({ onSelectDoctor }: { onSelectDoctor: (doctor: any) => void }) {
   const [doctors, setDoctors] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchDoctors = async () => {
+      setLoading(true);
       try {
-        const result = await doctorAPI.searchDoctors();
-        setDoctors(result.doctors);
+        const response = await fetch('http://localhost:5000/api/v1/doctors');
+        const data = await response.json();
+        setDoctors(data.doctors || []);
       } catch (error) {
-        console.error("Failed to fetch doctors", error);
+        console.error('Error fetching doctors:', error);
       }
       setLoading(false);
     };
+
     fetchDoctors();
   }, []);
 
-  if (loading) return <div>Loading doctors...</div>;
-
   return (
-    <div className="doctor-container">
-      <h2>Find Doctors</h2>
-      <div className="doctor-grid">
-        {doctors.map((doctor) => (
-          <div key={doctor.id} className="doctor-card">
-            <h3>{doctor.name}</h3>
-            <p className="specialty">{doctor.specialty}</p>
-            <p>Experience: {doctor.experience_years} years</p>
-            <p className="rating">⭐ {doctor.rating} ({doctor.total_reviews} reviews)</p>
-            <p className="fee">₹{doctor.consult_fee} per consultation</p>
-            <button onClick={() => onDoctorSelect(doctor.id)}>
-              View Details & Book
-            </button>
-          </div>
-        ))}
-      </div>
+    <div className="doctor-search-container">
+      <h2>Find a Doctor</h2>
+      {loading ? (
+        <p>Loading doctors...</p>
+      ) : (
+        <div className="doctor-grid">
+          {doctors.map((doctor) => (
+            <div key={doctor.id} className="doctor-card">
+              <h3>{doctor.name}</h3>
+              <p>{doctor.specialty}</p>
+              <p>Rating: {doctor.rating} ⭐</p>
+              <p>Fee: ₹{doctor.consult_fee}</p>
+              <button onClick={() => onSelectDoctor(doctor)}>
+                View Details
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
-};
+}

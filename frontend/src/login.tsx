@@ -1,42 +1,44 @@
-import { useState } from "react";
-import { authAPI } from "../api";
-import "./Login.css";
+import { useState } from 'react';
+import './login.css';
 
-export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
-  const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [step, setStep] = useState<"phone" | "otp">("phone");
+export default function Login({ onLogin }: { onLogin: () => void }) {
+  const [phone, setPhone] = useState('');
+  const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSendOTP = async () => {
+  const handleSendOtp = async () => {
     setLoading(true);
-    setError("");
     try {
-      const result = await authAPI.sendOTP(phone);
-      if (result.message) {
-        setStep("otp");
-        alert("OTP sent! Check backend terminal for code");
+      const response = await fetch('http://localhost:5000/api/v1/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setOtpSent(true);
+        alert(`OTP: ${data.otp || '123456'}`);
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to send OTP");
+    } catch (error) {
+      console.error('Error:', error);
     }
     setLoading(false);
   };
 
-  const handleVerifyOTP = async () => {
+  const handleVerifyOtp = async () => {
     setLoading(true);
-    setError("");
     try {
-      const result = await authAPI.verifyOTP(phone, otp);
-      if (result.access_token) {
-        alert("Login successful!");
-        onSuccess();
-      } else {
-        setError(result.error?.message || "Invalid OTP");
+      const response = await fetch('http://localhost:5000/api/v1/auth/verify-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone, otp }),
+      });
+      if (response.ok) {
+        onLogin();
       }
-    } catch (err: any) {
-      setError(err.message || "Failed to verify OTP");
+    } catch (error) {
+      console.error('Error:', error);
     }
     setLoading(false);
   };
@@ -44,41 +46,37 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
   return (
     <div className="login-container">
       <div className="login-box">
-        <h1>SlimRx Login</h1>
+        <h1>SlimRx</h1>
+        <p>GLP-1 Telehealth Platform</p>
 
-        {error && <div className="error">{error}</div>}
+        <div className="login-form">
+          <input
+            type="tel"
+            placeholder="Enter phone number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            disabled={otpSent}
+          />
 
-        {step === "phone" ? (
-          <>
-            <input
-              type="tel"
-              placeholder="Enter phone (+919876543210)"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
-            />
-            <button onClick={handleSendOTP} disabled={loading}>
-              {loading ? "Sending..." : "Send OTP"}
+          {!otpSent ? (
+            <button onClick={handleSendOtp} disabled={loading}>
+              {loading ? 'Sending...' : 'Send OTP'}
             </button>
-          </>
-        ) : (
-          <>
-            <input
-              type="text"
-              placeholder="Enter OTP (check terminal)"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              disabled={loading}
-            />
-            <button onClick={handleVerifyOTP} disabled={loading}>
-              {loading ? "Verifying..." : "Verify OTP"}
-            </button>
-            <button onClick={() => setStep("phone")} className="back-btn">
-              Back
-            </button>
-          </>
-        )}
+          ) : (
+            <>
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+              <button onClick={handleVerifyOtp} disabled={loading}>
+                {loading ? 'Verifying...' : 'Verify OTP'}
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
-};
+}

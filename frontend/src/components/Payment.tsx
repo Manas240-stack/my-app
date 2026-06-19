@@ -1,14 +1,5 @@
-import { useState, useEffect } from "react";
-import { paymentAPI } from "../api";
-import "./Payment.css";
-
-interface PaymentProps {
-  consultationFee: number;
-  doctorName: string;
-  consultationDate: string;
-  onPaymentSuccess: () => void;
-  onCancel: () => void;
-}
+import { useEffect, useState } from 'react';
+import './Payment.css';
 
 declare global {
   interface Window {
@@ -16,259 +7,85 @@ declare global {
   }
 }
 
-export const Payment = ({
-  consultationFee,
-  doctorName,
-  consultationDate,
-  onPaymentSuccess,
-  onCancel,
-}: PaymentProps) => {
+export default function Payment({ onSuccess }: { onSuccess: () => void }) {
   const [loading, setLoading] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<string | null>(null);
-  const [error, setError] = useState("");
+  const amount = 1299;
 
-  // Load Razorpay script
   useEffect(() => {
-    // Check if script already loaded
-    if (window.Razorpay) {
-      console.log("✅ Razorpay script already loaded");
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
-    script.onload = () => {
-      console.log("✅ Razorpay script loaded successfully");
-    };
-    script.onerror = () => {
-      console.error("❌ Failed to load Razorpay script");
-      setError("Failed to load payment gateway");
-    };
-
     document.body.appendChild(script);
-
-    return () => {
-      // Don't remove script
-    };
   }, []);
 
   const handlePayment = async () => {
     setLoading(true);
-    setError("");
-
     try {
-      console.log("💳 Starting payment process...");
+      const orderResponse = await fetch('http://localhost:5000/api/v1/payments/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount, type: 'consultation' }),
+      });
 
-      const token = localStorage.getItem("access_token");
+      const orderData = await orderResponse.json();
+      const razorpayOrderId = orderData.razorpay_order_id;
 
-      // Create order on backend
-      console.log("📍 Creating Razorpay order...");
-      const orderResult = await paymentAPI.createOrder(
-        token || "",
-        consultationFee,
-        "consultation"
-      );
-
-      console.log("✅ Order created:", orderResult);
-
-      if (!orderResult.razorpay_order_id) {
-        throw new Error("Failed to create order - no order ID returned");
-      }
-
-      // Check if Razorpay is loaded
-      if (!window.Razorpay) {
-        throw new Error("Razorpay not loaded. Please refresh and try again.");
-      }
-
-      console.log("🎯 Opening Razorpay checkout...");
-
-      // Razorpay options with YOUR actual key
       const options = {
-        key: "rzp_test_T38FW4B5aedEKc", // Your actual test key
-        amount: consultationFee * 100, // Amount in paise
-        currency: "INR",
-        name: "SlimRx",
-        description: `Consultation with ${doctorName}`,
-        order_id: orderResult.razorpay_order_id,
-        handler: async (response: any) => {
-          try {
-            console.log("✅ Payment completed by user");
-            console.log("   Payment Response:", response);
+        key: 'rzp_test_T38FWB5aedEKc',
+        amount: amount * 100,
+        currency: 'INR',
+        name: 'SlimRx',
+        description: 'Consultation Booking',
+        order_id: razorpayOrderId,
+        handler: async function (response: any) {
+          const verifyResponse = await fetch('http://localhost:5000/api/v1/payments/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              razorpay_order_id: razorpayOrderId,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
 
-            // Verify payment on backend
-            const verifyResult = await paymentAPI.verifyPayment(
-              token || "",
-              orderResult.razorpay_order_id,
-              response.razorpay_payment_id,
-              response.razorpay_signature
-            );
-
-            console.log("🔐 Verification result:", verifyResult);
-
-            if (verifyResult.success) {
-              setPaymentStatus("success");
-              setTimeout(() => {
-                onPaymentSuccess();
-              }, 2000);
-            } else {
-              setError("Payment verification failed");
-              setPaymentStatus("failed");
-            }
-          } catch (err: any) {
-            console.error("❌ Payment verification error:", err);
-            setError(err.message || "Payment verification failed");
-            setPaymentStatus("failed");
+          if (verifyResponse.ok) {
+            alert('Payment successful!');
+            onSuccess();
           }
         },
         prefill: {
-          name: "Patient Name",
-          email: "patient@slimrx.in",
-          contact: "9876543210",
-        },
-        theme: {
-          color: "#667eea",
-        },
-        modal: {
-          ondismiss: () => {
-            console.log("⚠️ Payment modal closed by user");
-            setLoading(false);
-          },
+          name: 'Patient',
+          email: 'patient@slimrx.in',
+          contact: '9876543210',
         },
       };
 
-      const paymentWindow = new window.Razorpay(options);
-      paymentWindow.open();
-
-      setLoading(false);
-    } catch (err: any) {
-      console.error("❌ Payment error:", err);
-      setError(err.message || "Failed to initiate payment");
-      setPaymentStatus("failed");
-      setLoading(false);
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment failed');
     }
+    setLoading(false);
   };
 
-  // Success State
-  if (paymentStatus === "success") {
-    return (
-      <div className="payment-modal-overlay">
-        <div className="payment-modal payment-success">
-          <div className="success-icon">✅</div>
-          <h2>Payment Successful!</h2>
-          <p>Your consultation has been booked successfully.</p>
-          <div className="receipt-details">
-            <div className="receipt-item">
-              <span>Doctor:</span>
-              <span>{doctorName}</span>
-            </div>
-            <div className="receipt-item">
-              <span>Date & Time:</span>
-              <span>{new Date(consultationDate).toLocaleString()}</span>
-            </div>
-            <div className="receipt-item">
-              <span>Amount Paid:</span>
-              <span>₹{consultationFee}</span>
-            </div>
-          </div>
-          <p className="redirecting">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error State
-  if (paymentStatus === "failed") {
-    return (
-      <div className="payment-modal-overlay">
-        <div className="payment-modal payment-failed">
-          <div className="failed-icon">❌</div>
-          <h2>Payment Failed</h2>
-          <p>{error || "Something went wrong. Please try again."}</p>
-          <div className="modal-actions">
-            <button className="btn-primary" onClick={handlePayment}>
-              Retry Payment
-            </button>
-            <button className="btn-secondary" onClick={onCancel}>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Default Payment Form
   return (
-    <div className="payment-modal-overlay">
-      <div className="payment-modal">
-        <button className="modal-close" onClick={onCancel}>
-          ✕
+    <div className="payment-container">
+      <div className="payment-box">
+        <h2>Complete Payment</h2>
+        <p className="amount">₹{amount}</p>
+        <p className="description">Consultation Booking</p>
+
+        <button
+          onClick={handlePayment}
+          disabled={loading}
+          className="pay-btn"
+        >
+          {loading ? 'Processing...' : `Pay ₹${amount} with Razorpay`}
         </button>
 
-        <h2>Complete Payment</h2>
-
-        <div className="payment-details">
-          <div className="detail-section">
-            <h3>Consultation Details</h3>
-            <div className="detail-item">
-              <span>Doctor:</span>
-              <span className="highlight">{doctorName}</span>
-            </div>
-            <div className="detail-item">
-              <span>Date & Time:</span>
-              <span className="highlight">
-                {new Date(consultationDate).toLocaleString()}
-              </span>
-            </div>
-          </div>
-
-          <div className="detail-section">
-            <h3>Payment Information</h3>
-            <div className="detail-item">
-              <span>Consultation Fee:</span>
-              <span>₹{consultationFee}</span>
-            </div>
-            <div className="detail-item">
-              <span>Taxes (0%):</span>
-              <span>₹0</span>
-            </div>
-            <div className="detail-item total">
-              <span>Total Amount:</span>
-              <span>₹{consultationFee}</span>
-            </div>
-          </div>
-
-          <div className="payment-methods">
-            <h3>Payment Method</h3>
-            <div className="method-info">
-              <span>💳 Credit/Debit Card</span>
-              <span>🏦 Net Banking</span>
-              <span>📱 UPI</span>
-              <span>🔐 Powered by Razorpay</span>
-            </div>
-          </div>
-
-          {error && <div className="error-message">{error}</div>}
-        </div>
-
-        <div className="modal-actions">
-          <button
-            className="btn-primary"
-            onClick={handlePayment}
-            disabled={loading}
-          >
-            {loading ? "Processing..." : "Pay Now"}
-          </button>
-          <button className="btn-secondary" onClick={onCancel} disabled={loading}>
-            Cancel
-          </button>
-        </div>
-
-        <div className="payment-footer">
-          <p>🔒 Secure payment powered by Razorpay</p>
-        </div>
+        <p className="info">Secure payment powered by Razorpay</p>
       </div>
     </div>
   );
-};
+}

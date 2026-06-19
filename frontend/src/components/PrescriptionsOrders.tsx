@@ -1,285 +1,96 @@
-import { useState, useEffect } from "react";
-import { patientAPI } from "../api";
-import "./PrescriptionsOrders.css";
+import { useState, useEffect } from 'react';
+import './PrescriptionsOrders.css';
 
-interface PrescriptionsOrdersProps {
-  onBack: () => void;
-}
-
-export const PrescriptionsOrders = ({ onBack }: PrescriptionsOrdersProps) => {
-  const [activeTab, setActiveTab] = useState<"prescriptions" | "orders">(
-    "prescriptions"
-  );
+export default function PrescriptionsOrders() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState('prescriptions');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (activeTab === 'prescriptions') {
+      fetchPrescriptions();
+    } else {
+      fetchOrders();
+    }
+  }, [activeTab]);
 
-  const fetchData = async () => {
+  const fetchPrescriptions = async () => {
+    setLoading(true);
     try {
-      const token = localStorage.getItem("access_token");
-
-      const prescResult = await patientAPI.getPrescriptions(token || "");
-      setPrescriptions(prescResult.prescriptions || []);
-
-      const ordersResult = await patientAPI.getOrders(token || "");
-      setOrders(ordersResult.orders || []);
+      const response = await fetch('http://localhost:5000/api/v1/patients/prescriptions');
+      const data = await response.json();
+      setPrescriptions(data.prescriptions || []);
     } catch (error) {
-      console.error("Failed to fetch data", error);
+      console.error('Error fetching prescriptions:', error);
     }
     setLoading(false);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "status-active";
-      case "completed":
-        return "status-completed";
-      case "expired":
-        return "status-expired";
-      default:
-        return "status-pending";
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/v1/patients/orders');
+      const data = await response.json();
+      setOrders(data.orders || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
     }
+    setLoading(false);
   };
-
-  const getOrderStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "status-pending";
-      case "confirmed":
-        return "status-confirmed";
-      case "dispatched":
-        return "status-dispatched";
-      case "delivered":
-        return "status-delivered";
-      case "cancelled":
-        return "status-cancelled";
-      default:
-        return "status-pending";
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "pending":
-        return "⏳";
-      case "confirmed":
-        return "✅";
-      case "dispatched":
-        return "📦";
-      case "delivered":
-        return "🎉";
-      case "cancelled":
-        return "❌";
-      default:
-        return "📋";
-    }
-  };
-
-  if (loading) return <div className="loading">Loading prescriptions & orders...</div>;
 
   return (
-    <div className="prescriptions-orders-container">
-      <div className="po-header">
-        <button className="back-btn" onClick={onBack}>
-          ← Back
-        </button>
-        <h1>Prescriptions & Orders</h1>
-        <div style={{ width: "80px" }}></div>
-      </div>
+    <div className="prescriptions-container">
+      <h2>Prescriptions & Orders</h2>
 
-      {/* Tab Navigation */}
-      <div className="tab-navigation">
+      <div className="tabs">
         <button
-          className={`tab-btn ${activeTab === "prescriptions" ? "active" : ""}`}
-          onClick={() => setActiveTab("prescriptions")}
+          className={activeTab === 'prescriptions' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('prescriptions')}
         >
-          💊 Prescriptions
+          Prescriptions
         </button>
         <button
-          className={`tab-btn ${activeTab === "orders" ? "active" : ""}`}
-          onClick={() => setActiveTab("orders")}
+          className={activeTab === 'orders' ? 'tab active' : 'tab'}
+          onClick={() => setActiveTab('orders')}
         >
-          📦 Orders
+          Orders
         </button>
       </div>
 
-      {/* PRESCRIPTIONS TAB */}
-      {activeTab === "prescriptions" && (
-        <div className="tab-content">
-          {prescriptions.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">💊</div>
-              <h2>No Prescriptions</h2>
-              <p>Book a consultation to get prescriptions</p>
-            </div>
-          ) : (
-            <div className="prescriptions-list">
-              {prescriptions.map((prescription) => (
-                <div key={prescription.id} className="prescription-card">
-                  <div className="prescription-top">
-                    <div className="medication-info">
-                      <h3>{prescription.medication_name}</h3>
-                      <p className="rx-number">Rx: {prescription.rx_number}</p>
-                    </div>
-                    <span className={`status ${getStatusColor(prescription.status)}`}>
-                      {prescription.status.charAt(0).toUpperCase() +
-                        prescription.status.slice(1)}
-                    </span>
-                  </div>
-
-                  <div className="prescription-details">
-                    <div className="detail-item">
-                      <span className="label">💊 Dose</span>
-                      <span className="value">{prescription.dose}</span>
-                    </div>
-
-                    <div className="detail-item">
-                      <span className="label">⏰ Frequency</span>
-                      <span className="value">{prescription.frequency}</span>
-                    </div>
-
-                    <div className="detail-item">
-                      <span className="label">📅 Duration</span>
-                      <span className="value">{prescription.duration_days} days</span>
-                    </div>
-
-                    <div className="detail-item">
-                      <span className="label">⏳ Valid Until</span>
-                      <span className="value">
-                        {new Date(prescription.valid_until).toLocaleDateString()}
-                      </span>
-                    </div>
-
-                    <div className="detail-item">
-                      <span className="label">📝 Created</span>
-                      <span className="value">
-                        {new Date(prescription.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="prescription-actions">
-                    <button className="action-btn refill-btn">🔄 Refill</button>
-                    <button className="action-btn download-btn">⬇️ Download</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ORDERS TAB */}
-      {activeTab === "orders" && (
-        <div className="tab-content">
-          {orders.length === 0 ? (
-            <div className="empty-state">
-              <div className="empty-icon">📦</div>
-              <h2>No Orders</h2>
-              <p>Your medicine orders will appear here</p>
-            </div>
-          ) : (
-            <div className="orders-list">
-              {orders.map((order) => (
-                <div key={order.id} className="order-card">
-                  <div className="order-top">
-                    <div className="order-info">
-                      <h3>Order #{order.order_number}</h3>
-                      <p className="order-date">
-                        Placed on{" "}
-                        {new Date(order.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <span className={`status ${getOrderStatusColor(order.status)}`}>
-                      {getStatusIcon(order.status)} {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                    </span>
-                  </div>
-
-                  <div className="order-timeline">
-                    <div className={`timeline-step ${order.status === "pending" || ["confirmed", "dispatched", "delivered"].includes(order.status) ? "completed" : ""}`}>
-                      <div className="timeline-dot">📋</div>
-                      <p>Order Placed</p>
-                    </div>
-                    <div className={`timeline-step ${["confirmed", "dispatched", "delivered"].includes(order.status) ? "completed" : ""}`}>
-                      <div className="timeline-dot">✅</div>
-                      <p>Confirmed</p>
-                    </div>
-                    <div className={`timeline-step ${["dispatched", "delivered"].includes(order.status) ? "completed" : ""}`}>
-                      <div className="timeline-dot">📦</div>
-                      <p>Dispatched</p>
-                    </div>
-                    <div className={`timeline-step ${order.status === "delivered" ? "completed" : ""}`}>
-                      <div className="timeline-dot">🎉</div>
-                      <p>Delivered</p>
-                    </div>
-                  </div>
-
-                  <div className="order-details">
-                    <div className="detail-group">
-                      <h4>Delivery Address</h4>
-                      <p>{order.delivery_address?.full_name}</p>
-                      <p>{order.delivery_address?.address_line1}</p>
-                      <p>
-                        {order.delivery_address?.city},{" "}
-                        {order.delivery_address?.state}{" "}
-                        {order.delivery_address?.pincode}
-                      </p>
-                      <p>📞 {order.delivery_address?.phone}</p>
-                    </div>
-
-                    <div className="detail-group">
-                      <h4>Shipping Details</h4>
-                      {order.tracking_number && (
-                        <>
-                          <p>
-                            <strong>Courier:</strong> {order.courier}
-                          </p>
-                          <p>
-                            <strong>Tracking No:</strong> {order.tracking_number}
-                          </p>
-                        </>
-                      )}
-                    </div>
-
-                    <div className="detail-group">
-                      <h4>Order Summary</h4>
-                      <p>
-                        <strong>Amount:</strong> ₹{order.amount}
-                      </p>
-                      <p>
-                        <strong>Quantity:</strong> {order.quantity}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="order-actions">
-                    {order.status === "dispatched" && (
-                      <button className="action-btn track-btn">
-                        🗺️ Track Package
-                      </button>
-                    )}
-                    {order.status === "delivered" && (
-                      <button className="action-btn reorder-btn">
-                        🔄 Reorder
-                      </button>
-                    )}
-                    {order.status === "pending" && (
-                      <button className="action-btn cancel-btn">
-                        ❌ Cancel Order
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      {loading ? (
+        <p>Loading...</p>
+      ) : activeTab === 'prescriptions' ? (
+        prescriptions.length === 0 ? (
+          <p>No prescriptions</p>
+        ) : (
+          <div className="items-list">
+            {prescriptions.map((prescription) => (
+              <div key={prescription.id} className="item-card">
+                <h3>Prescription #{prescription.id}</h3>
+                <p><strong>Doctor:</strong> {prescription.doctor_id}</p>
+                <p><strong>Date:</strong> {new Date(prescription.created_at).toLocaleDateString()}</p>
+                <p><strong>Status:</strong> {prescription.status}</p>
+              </div>
+            ))}
+          </div>
+        )
+      ) : (
+        orders.length === 0 ? (
+          <p>No orders</p>
+        ) : (
+          <div className="items-list">
+            {orders.map((order) => (
+              <div key={order.id} className="item-card">
+                <h3>Order #{order.id}</h3>
+                <p><strong>Total:</strong> ₹{order.total}</p>
+                <p><strong>Status:</strong> {order.status}</p>
+                <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
+              </div>
+            ))}
+          </div>
+        )
       )}
     </div>
   );
-};
+}
