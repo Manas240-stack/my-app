@@ -1,0 +1,208 @@
+// Prisma Schema - SlimRx Database
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Model - Base for all users (patients, doctors, admins)
+model User {
+  id        String     @id @default(cuid())
+  phone     String     @unique
+  email     String?    @unique
+  role      String     @default("patient") // patient, doctor, admin
+  name      String?
+  isVerified Boolean   @default(false)
+  isActive  Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  // Relations
+  patient        Patient?
+  doctor         Doctor?
+  weightLogs     WeightLog[]
+  payments       Payment[]
+}
+
+// Patient Model
+model Patient {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  currentWeight Float?
+  startWeight   Float?
+  goalWeight    Float?
+  city          String?
+  gender        String?
+  heightCm      Int?
+  conditions    String[] // ["Type 2 Diabetes", "Hypertension"]
+  medications   String?
+  eligibilityScore Int?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  weightLogs    WeightLog[]
+  consultations Consultation[]
+  prescriptions Prescription[]
+  orders        Order[]
+}
+
+// Doctor Model
+model Doctor {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  mciNumber     String?
+  specialty     String?
+  experienceYears Int?
+  consultFee    Float?
+  rating        Float?
+  totalReviews  Int?
+  totalPatients Int?
+  isAvailable   Boolean  @default(true)
+  profileStatus String   @default("pending") // pending, verified, suspended
+  city          String?
+  languages     String[] // ["English", "Hindi"]
+  bio           String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  consultations Consultation[]
+  prescriptions Prescription[]
+}
+
+// Consultation Model
+model Consultation {
+  id            String   @id @default(cuid())
+  
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  scheduledAt   DateTime
+  mode          String   @default("video") // video, audio, text
+  status        String   @default("scheduled") // scheduled, completed, cancelled
+  feeCharged    Float?
+  bookingRef    String?
+  durationMins  Int?
+  videoLink     String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  prescriptions Prescription[]
+  payment       Payment?
+}
+
+// Prescription Model
+model Prescription {
+  id            String   @id @default(cuid())
+  
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  doctorId      String
+  doctor        Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  
+  consultationId String?
+  consultation  Consultation? @relation(fields: [consultationId], references: [id], onDelete: SetNull)
+  
+  medicationName String?
+  dosage        String?
+  frequency     String? // "Twice daily", "Once daily"
+  duration      String? // "30 days"
+  instructions  String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  orders        Order[]
+}
+
+// Order Model
+model Order {
+  id            String   @id @default(cuid())
+  
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  prescriptionId String
+  prescription  Prescription @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  
+  status        String   @default("pending") // pending, confirmed, shipped, delivered
+  quantity      Int?
+  totalAmount   Float?
+  shippingAddress String?
+  trackingId    String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// WeightLog Model
+model WeightLog {
+  id            String   @id @default(cuid())
+  
+  patientId     String
+  patient       Patient  @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  weightKg      Float
+  loggedAt      DateTime
+  note          String?
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Payment Model
+model Payment {
+  id                String   @id @default(cuid())
+  
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?
+  razorpaySignature String?
+  
+  amount            Float
+  currency          String   @default("INR")
+  type              String? // consultation, subscription
+  status            String   @default("created") // created, completed, failed
+  
+  consultationId    String?  @unique
+  consultation      Consultation? @relation(fields: [consultationId], references: [id], onDelete: SetNull)
+  
+  verifiedAt        DateTime?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// OtpLog Model
+model OtpLog {
+  id            String   @id @default(cuid())
+  phone         String   @unique
+  otp           String
+  expiresAt     DateTime
+  attempts      Int      @default(0)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

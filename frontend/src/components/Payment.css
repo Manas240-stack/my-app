@@ -1,0 +1,290 @@
+.payment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.payment-modal {
+  background: white;
+  border-radius: 15px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #999;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.payment-modal h2 {
+  margin: 0 0 30px 0;
+  color: #333;
+  font-size: 24px;
+  text-align: center;
+}
+
+.payment-details {
+  margin-bottom: 30px;
+}
+
+.detail-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-section h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
+
+.detail-item .highlight {
+  color: #333;
+  font-weight: 600;
+}
+
+.detail-item.total {
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.detail-item.total span:last-child {
+  color: #667eea;
+  font-size: 20px;
+}
+
+.payment-methods {
+  margin-bottom: 25px;
+  padding: 15px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.payment-methods h3 {
+  margin: 0 0 12px 0;
+  color: #333;
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.method-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 12px;
+  color: #666;
+}
+
+.method-info span {
+  padding: 8px;
+  background: white;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.error-message {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  flex: 1;
+  padding: 15px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover {
+  background: #5568d3;
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  flex: 1;
+  padding: 15px;
+  background: #f0f0f0;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+
+.btn-secondary:disabled {
+  background: #ddd;
+  cursor: not-allowed;
+}
+
+.payment-footer {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+/* SUCCESS STATE */
+.payment-success {
+  text-align: center;
+}
+
+.success-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+  animation: scaleUp 0.5s ease-out;
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.payment-success h2 {
+  color: #4caf50;
+  margin-bottom: 10px;
+}
+
+.payment-success p {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.receipt-details {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.receipt-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.receipt-item span:first-child {
+  color: #999;
+}
+
+.receipt-item span:last-child {
+  color: #333;
+  font-weight: 600;
+}
+
+.redirecting {
+  color: #667eea;
+  font-size: 13px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* FAILED STATE */
+.payment-failed {
+  text-align: center;
+}
+
+.failed-icon {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.payment-failed h2 {
+  color: #e74c3c;
+  margin-bottom: 10px;
+}
+
+.payment-failed p {
+  color: #666;
+  margin-bottom: 20px;
+}
