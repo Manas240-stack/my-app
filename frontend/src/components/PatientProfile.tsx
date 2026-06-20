@@ -1,56 +1,29 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./PatientProfile.css";
 
 export default function PatientProfile() {
   const [profile, setProfile] = useState<any>(null);
-  const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
-    fetchProfile();
+    fetch(
+      "https://my-app-production-ac5b.up.railway.app/api/v1/patients/profile"
+    )
+      .then((r) => r.json())
+      .then((d) => setProfile(d.patient));
   }, []);
 
-  const fetchProfile = async () => {
-    try {
-      const response = await fetch(
-        "https://my-app-production-ac5b.up.railway.app/api/v1/patients/profile"
-      );
-      const data = await response.json();
-      setProfile(data.patient);
-      setFormData(data.patient);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      const response = await fetch(
-        "https://my-app-production-ac5b.up.railway.app/api/v1/patients/profile",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setProfile(data.patient);
-        setEditing(false);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   if (!profile) return <p>Loading...</p>;
+
+  const bmi = (
+    profile.current_weight /
+    ((profile.height_cm / 100) * (profile.height_cm / 100))
+  ).toFixed(1);
 
   return (
     <div className="profile-page">
       <div className="profile-card">
-        <div className="profile-header">
-          <div className="profile-avatar">👤</div>
+        <div className="profile-top">
+          <div className="avatar">👤</div>
 
           <div>
             <h1>{profile.name}</h1>
@@ -58,62 +31,27 @@ export default function PatientProfile() {
           </div>
         </div>
 
-        {!editing ? (
-          <>
-            <div className="profile-grid">
-              <div>Weight: {profile.current_weight} kg</div>
-              <div>Goal: {profile.goal_weight} kg</div>
-              <div>Height: {profile.height_cm} cm</div>
-              <div>City: {profile.city}</div>
-            </div>
+        <div className="metric-grid">
+          <div className="metric-box">
+            <h4>Current Weight</h4>
+            <p>{profile.current_weight} kg</p>
+          </div>
 
-            <button onClick={() => setEditing(true)}>Edit Profile</button>
-          </>
-        ) : (
-          <>
-            <div className="form-grid">
-              <input
-                value={formData.name || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Name"
-              />
+          <div className="metric-box">
+            <h4>Goal Weight</h4>
+            <p>{profile.goal_weight} kg</p>
+          </div>
 
-              <input
-                value={formData.current_weight || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    current_weight: e.target.value,
-                  })
-                }
-                placeholder="Current Weight"
-              />
+          <div className="metric-box">
+            <h4>Height</h4>
+            <p>{profile.height_cm} cm</p>
+          </div>
 
-              <input
-                value={formData.goal_weight || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    goal_weight: e.target.value,
-                  })
-                }
-                placeholder="Goal Weight"
-              />
-
-              <input
-                value={formData.city || ""}
-                onChange={(e) =>
-                  setFormData({ ...formData, city: e.target.value })
-                }
-                placeholder="City"
-              />
-            </div>
-
-            <button onClick={handleSave}>Save Changes</button>
-          </>
-        )}
+          <div className="metric-box">
+            <h4>BMI</h4>
+            <p>{bmi}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
