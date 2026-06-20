@@ -1,28 +1,33 @@
 import "./LandingPage.css";
 
+interface LandingPageProps {
+  onGetStarted: () => void;
+}
+
 export default function LandingPage({
   onGetStarted,
-}: {
-  onGetStarted: () => void;
-}) {
+}: LandingPageProps) {
   return (
-    <div className="landing">
-      <nav className="navbar-landing">
-        <div className="logo">SlimRx</div>
-        <button className="nav-btn" onClick={onGetStarted}>
+    <div className="landing-wrapper">
+      <nav className="landing-nav">
+        <div className="landing-logo">🌿 SlimRx</div>
+
+        <button className="landing-login-btn" onClick={onGetStarted}>
           Login
         </button>
       </nav>
 
       <section className="hero-section">
         <div className="hero-left">
+          <span className="hero-badge">Doctor Guided Weight Loss</span>
+
           <h1>
-            Doctor Guided <span>GLP-1</span> Weight Loss
+            Your <span>GLP-1</span> Health Journey Starts Here
           </h1>
 
           <p>
-            Consult verified doctors, manage prescriptions, track weight
-            progress and transform your health journey online.
+            Connect with certified doctors, manage prescriptions, track weight
+            progress, and transform your health with expert care.
           </p>
 
           <button className="hero-btn" onClick={onGetStarted}>
@@ -31,17 +36,10 @@ export default function LandingPage({
         </div>
 
         <div className="hero-right">
-          <div className="floating-card">👨‍⚕️ 50+ Doctors</div>
-          <div className="floating-card">📊 Weight Tracking</div>
-          <div className="floating-card">💊 GLP-1 Care</div>
+          <div className="glass-card">👨‍⚕️ 50+ Doctors</div>
+          <div className="glass-card">💊 Digital Prescriptions</div>
+          <div className="glass-card">⚖️ Weight Analytics</div>
         </div>
-      </section>
-
-      <section className="features-section">
-        <div className="feature-card">Online Consultation</div>
-        <div className="feature-card">Digital Prescriptions</div>
-        <div className="feature-card">Weight Analytics</div>
-        <div className="feature-card">Secure Payments</div>
       </section>
     </div>
   );
