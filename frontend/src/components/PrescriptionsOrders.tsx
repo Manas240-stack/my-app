@@ -18,7 +18,7 @@ export default function PrescriptionsOrders() {
   const fetchPrescriptions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/prescriptions');
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/prescriptions');
       const data = await response.json();
       setPrescriptions(data.prescriptions || []);
     } catch (error) {
@@ -30,7 +30,7 @@ export default function PrescriptionsOrders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/orders');
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/orders');
       const data = await response.json();
       setOrders(data.orders || []);
     } catch (error) {
