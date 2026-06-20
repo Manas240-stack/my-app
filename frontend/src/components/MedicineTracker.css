@@ -1,0 +1,88 @@
+.medicine-page {
+  padding: 40px;
+}
+
+.medicine-header h1 {
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+
+.medicine-header p {
+  color: #64748b;
+  margin-bottom: 32px;
+}
+
+.medicine-tabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.medicine-tabs button {
+  padding: 16px 24px;
+  border-radius: 18px;
+  border: 1px solid #cbd5e1;
+  background: white;
+  font-weight: 600;
+}
+
+.medicine-tabs button.active {
+  background: linear-gradient(135deg,#14b8a6,#2563eb);
+  color: white;
+  border: none;
+}
+
+.orders-grid,
+.sub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px,1fr));
+  gap: 24px;
+}
+
+.order-card,
+.sub-card {
+  background: white;
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(20,184,166,0.12);
+  color: #0f766e;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.order-card h3,
+.sub-card h3 {
+  margin-bottom: 16px;
+}
+
+.sub-card h2 {
+  font-size: 34px;
+  margin: 20px 0;
+}
+
+.sub-card button {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg,#14b8a6,#2563eb);
+  color: white;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .medicine-page {
+    padding: 20px;
+  }
+
+  .medicine-tabs {
+    flex-direction: column;
+  }
+}
