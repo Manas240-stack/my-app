@@ -10,7 +10,7 @@ export default function DoctorDetails({ doctor, onBooking }: { doctor: any; onBo
     const fetchSlots = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:5000/api/v1/doctors/${doctor.id}/slots`);
+        const response = await fetch(`http://my-app-production-ac5b.up.railway.app/api/v1/doctors/${doctor.id}/slots`);
         const data = await response.json();
         setSlots(data.slots || []);
       } catch (error) {
