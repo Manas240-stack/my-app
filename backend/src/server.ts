@@ -657,8 +657,8 @@ const start = async () => {
     console.log(`\n${"=".repeat(70)}`);
     console.log(`✅ SlimRx Backend Running Successfully!`);
     console.log(`${"=".repeat(70)}`);
-    console.log(`🚀 Server: http://localhost:${PORT}`);
-    console.log(`🏥 Health: http://localhost:${PORT}/health`);
+    console.log(`🚀 Server: http://my-app-production-ac5b.up.railway.app:${5000}`);
+    console.log(`🏥 Health: http://my-app-production-ac5b.up.railway.app:${5000}/health`);
     console.log(`💳 Razorpay Integrated: YES`);
     console.log(`🔑 API Key: ${process.env.RAZORPAY_KEY_ID}`);
     console.log(`${"=".repeat(70)}\n`);
