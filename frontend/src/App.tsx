@@ -38,19 +38,23 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
-  const handleLogin = () => {
+  function handleLogin() {
     setIsLoggedIn(true);
     setCurrentPage("home");
-  };
+  }
 
-  const handleLogout = () => {
+  function handleLogout() {
     setIsLoggedIn(false);
-    setCurrentPage("login");
     setSelectedDoctor(null);
-  };
+    setCurrentPage("login");
+  }
 
   if (currentPage === "landing") {
-    return <LandingPage onGetStarted={() => setCurrentPage("login")} />;
+    return (
+      <LandingPage
+        onGetStarted={() => setCurrentPage("login")}
+      />
+    );
   }
 
   if (!isLoggedIn) {
@@ -58,59 +62,116 @@ export default function App() {
   }
 
   return (
-    <div className="dashboard">
-      {/* Sidebar */}
-      <aside className="sidebar">
-        <h2 className="logo">SlimRx</h2>
+    <div className="app-shell">
+      {/* Top Navbar */}
+      <header className="top-nav">
+        <div className="nav-left">
+          <div className="logo-box">🌿</div>
 
-        <button onClick={() => setCurrentPage("home")}>Doctor Search</button>
-        <button onClick={() => setCurrentPage("profile")}>My Profile</button>
-        <button onClick={() => setCurrentPage("consultationHistory")}>
-          Consultations
-        </button>
-        <button onClick={() => setCurrentPage("prescriptions")}>
-          Prescriptions
-        </button>
-        <button onClick={() => setCurrentPage("weight")}>
-          Weight Log
-        </button>
+          <div>
+            <div className="brand-name">SlimRx</div>
+            <div className="role-badge">PATIENT</div>
+          </div>
+        </div>
 
         <button className="logout-btn" onClick={handleLogout}>
           Logout
         </button>
-      </aside>
+      </header>
 
-      {/* Main Area */}
-      <div className="content-area">
-        <header className="topbar">
-          <h1>Patient Dashboard</h1>
-        </header>
+      <div className="main-layout">
+        {/* Sidebar */}
+        <aside className="sidebar">
+          <button
+            className={currentPage === "home" ? "nav-item active" : "nav-item"}
+            onClick={() => setCurrentPage("home")}
+          >
+            📊 Dashboard
+          </button>
 
-        <main className="page-content">
-          {currentPage === "home" && (
-            <DoctorSearch
-              onSelectDoctor={(doctor) => {
-                setSelectedDoctor(doctor);
-                setCurrentPage("doctorDetails");
-              }}
-            />
-          )}
+          <button
+            className={
+              currentPage === "profile" ? "nav-item active" : "nav-item"
+            }
+            onClick={() => setCurrentPage("profile")}
+          >
+            👤 Profile
+          </button>
 
-          {currentPage === "doctorDetails" && selectedDoctor && (
-            <DoctorDetails
-              doctor={selectedDoctor}
-              onBooking={() => setCurrentPage("payment")}
-            />
-          )}
+          <button
+            className={
+              currentPage === "consultationHistory"
+                ? "nav-item active"
+                : "nav-item"
+            }
+            onClick={() => setCurrentPage("consultationHistory")}
+          >
+            📋 Consultations
+          </button>
 
-          {currentPage === "payment" && (
-            <Payment onSuccess={() => setCurrentPage("home")} />
-          )}
+          <button
+            className={
+              currentPage === "prescriptions"
+                ? "nav-item active"
+                : "nav-item"
+            }
+            onClick={() => setCurrentPage("prescriptions")}
+          >
+            💊 Prescriptions
+          </button>
 
-          {currentPage === "profile" && <PatientProfile />}
-          {currentPage === "consultationHistory" && <ConsultationHistory />}
-          {currentPage === "prescriptions" && <PrescriptionsOrders />}
-          {currentPage === "weight" && <WeightLogging />}
+          <button
+            className={
+              currentPage === "weight" ? "nav-item active" : "nav-item"
+            }
+            onClick={() => setCurrentPage("weight")}
+          >
+            ⚖️ Weight Tracker
+          </button>
+        </aside>
+
+        {/* Main Content */}
+        <main className="content">
+          <section className="page-header">
+            <h1>SlimRx Dashboard</h1>
+            <p>Manage your GLP-1 treatment journey</p>
+          </section>
+
+          <section className="page-body">
+            {currentPage === "home" && (
+              <DoctorSearch
+                onSelectDoctor={(doctor) => {
+                  setSelectedDoctor(doctor);
+                  setCurrentPage("doctorDetails");
+                }}
+              />
+            )}
+
+            {currentPage === "doctorDetails" && selectedDoctor && (
+              <DoctorDetails
+                doctor={selectedDoctor}
+                onBooking={() => setCurrentPage("payment")}
+              />
+            )}
+
+            {currentPage === "payment" && (
+              <Payment onSuccess={() => setCurrentPage("home")} />
+            )}
+
+            {currentPage === "profile" && <PatientProfile />}
+
+            {currentPage === "consultationHistory" && (
+              <ConsultationHistory />
+            )}
+
+            {currentPage === "prescriptions" && (
+              <PrescriptionsOrders />
+            )}
+
+            {currentPage === "weight" && (
+              <WeightLogging />
+            )}
+          </section>
         </main>
       </div>
     </div>
