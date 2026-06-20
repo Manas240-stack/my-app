@@ -12,7 +12,7 @@ export default function ConsultationHistory() {
   const fetchConsultations = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/consultations');
+      const response = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/patients/consultations');
       const data = await response.json();
       setConsultations(data.consultations || []);
     } catch (error) {
