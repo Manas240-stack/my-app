@@ -22,7 +22,6 @@ export default function Login({ onSuccess }: LoginProps) {
 
       if (result.message) {
         setStep("otp");
-        alert("OTP sent! Check backend terminal for code");
       } else {
         setError(result.error || "Failed to send OTP");
       }
@@ -41,7 +40,6 @@ export default function Login({ onSuccess }: LoginProps) {
       const result = await authAPI.verifyOTP(phone, otp);
 
       if (result.access_token) {
-        alert("Login successful!");
         onSuccess();
       } else {
         setError(result.error?.message || "Invalid OTP");
@@ -54,32 +52,26 @@ export default function Login({ onSuccess }: LoginProps) {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="brand-badge">
-          <div className="brand-circle">💊</div>
-        </div>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="logo-circle">💊</div>
 
         <h1>SlimRx</h1>
+        <p>Secure patient portal for consultations & prescriptions</p>
 
-        <p className="subtitle">
-          Secure patient login for consultations & prescriptions
-        </p>
-
-        {error && <div className="error">{error}</div>}
+        {error && <div className="error-box">{error}</div>}
 
         {step === "phone" ? (
           <>
             <input
               type="tel"
-              placeholder="Enter phone (+919876543210)"
+              placeholder="+91 9876543210"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
             />
 
             <button onClick={handleSendOTP} disabled={loading}>
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? "Sending OTP..." : "Send OTP"}
             </button>
           </>
         ) : (
@@ -89,7 +81,6 @@ export default function Login({ onSuccess }: LoginProps) {
               placeholder="Enter OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              disabled={loading}
             />
 
             <button onClick={handleVerifyOTP} disabled={loading}>
@@ -97,8 +88,8 @@ export default function Login({ onSuccess }: LoginProps) {
             </button>
 
             <button
+              className="back-button"
               onClick={() => setStep("phone")}
-              className="back-btn"
             >
               Back
             </button>
