@@ -9,7 +9,7 @@ export default function DoctorSearch({ onSelectDoctor }: { onSelectDoctor: (doct
     const fetchDoctors = async () => {
       setLoading(true);
       try {
-        const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/doctors');
+        const response = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/doctors');
         const data = await response.json();
         setDoctors(data.doctors || []);
       } catch (error) {
