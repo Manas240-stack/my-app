@@ -1,0 +1,33 @@
+.quiz-page {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-card {
+  width: 600px;
+  background: white;
+  padding: 40px;
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.06);
+}
+
+.quiz-card h1 {
+  margin-bottom: 20px;
+}
+
+.quiz-card input {
+  width: 100%;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
+  margin: 20px 0;
+}
+
+.quiz-card button {
+  width: 100%;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg,#14b8a6,#2563eb);
+  color: white;
+}
