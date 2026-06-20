@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.landing {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a, #2563eb);
+  color: white;
+}
+
+.navbar-landing {
+  display: flex;
+  justify-content: space-between;
+  padding: 24px 60px;
+  align-items: center;
+}
+
+.logo {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.nav-btn,
+.hero-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  align-items: center;
+  min-height: 75vh;
+  padding: 0 60px;
+}
+
+.hero-left h1 {
+  font-size: 64px;
+  line-height: 1.15;
+  margin-bottom: 20px;
+}
+
+.hero-left span {
+  color: #22c55e;
+}
+
+.hero-left p {
+  font-size: 22px;
+  opacity: 0.9;
+  max-width: 700px;
+  margin-bottom: 30px;
+}
+
+.hero-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.floating-card {
+  background: rgba(255,255,255,0.15);
+  padding: 28px;
+  border-radius: 20px;
+  backdrop-filter: blur(12px);
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 40px 60px;
+}
+
+.feature-card {
+  background: rgba(255,255,255,0.12);
+  padding: 30px;
+  border-radius: 18px;
+  text-align: center;
+  font-weight: bold;
+}
