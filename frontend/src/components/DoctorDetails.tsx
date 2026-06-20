@@ -29,7 +29,7 @@ export default function DoctorDetails({ doctor, onBooking }: { doctor: any; onBo
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/v1/consultations', {
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/consultations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
