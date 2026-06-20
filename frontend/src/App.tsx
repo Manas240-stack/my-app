@@ -8,7 +8,7 @@ import Payment from "./components/Payment";
 import PatientProfile from "./components/PatientProfile";
 import ConsultationHistory from "./components/ConsultationHistory";
 import PrescriptionsOrders from "./components/PrescriptionsOrders";
-import { WeightLogging } from "./components/WeightLogging";
+import WeightLogging from "./components/WeightLogging";
 
 type Page =
   | "login"
@@ -20,10 +20,21 @@ type Page =
   | "prescriptions"
   | "weight";
 
+interface Doctor {
+  id: number;
+  name: string;
+  specialty: string;
+  experience_years: number;
+  rating: number;
+  total_reviews: number;
+  consult_fee: number;
+  bio: string;
+}
+
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedDoctor, setSelectedDoctor] = useState<any>(null);
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
   const handleLogin = () => {
     setIsLoggedIn(true);
@@ -37,7 +48,7 @@ export default function App() {
   };
 
   if (!isLoggedIn) {
-    return <Login onLogin={handleLogin} />;
+    return <Login onSuccess={handleLogin} />;
   }
 
   return (
@@ -66,7 +77,9 @@ export default function App() {
             Weight Log
           </button>
 
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </nav>
 
@@ -102,9 +115,7 @@ export default function App() {
         )}
 
         {currentPage === "weight" && (
-          <WeightLogging
-            onBack={() => setCurrentPage("home")}
-          />
+          <WeightLogging />
         )}
       </main>
     </div>
