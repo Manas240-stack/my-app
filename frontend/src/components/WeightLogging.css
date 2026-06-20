@@ -1,39 +1,28 @@
-.weight-page h1 {
-  color: #00d4ff;
-  margin-bottom: 20px;
+.weight-page {
+  padding: 40px;
 }
 
-.weight-form {
-  display: grid;
-  gap: 16px;
+.weight-top {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 30px;
 }
 
-.weight-form input {
+.weight-top input {
   padding: 16px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,212,255,0.15);
-  background: rgba(255,255,255,0.05);
-  color: white;
+  border-radius: 16px;
+  border: 1px solid #cbd5e1;
 }
 
-.weight-form button {
-  padding: 16px;
-  border: none;
-  border-radius: 14px;
-  background: linear-gradient(90deg, #00d4ff, #0ea5e9);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.weight-list {
+.weight-grid {
   display: grid;
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 20px;
 }
 
 .weight-card {
-  background: rgba(15, 23, 42, 0.7);
-  border-radius: 20px;
-  padding: 20px;
+  background: white;
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.05);
 }
