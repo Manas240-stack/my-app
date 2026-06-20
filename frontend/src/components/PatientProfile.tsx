@@ -14,7 +14,7 @@ export default function PatientProfile() {
   const fetchProfile = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/profile');
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/profile');
       const data = await response.json();
       setProfile(data.patient);
       setFormData(data.patient);
@@ -27,7 +27,7 @@ export default function PatientProfile() {
   const handleSave = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/profile', {
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/profile', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
