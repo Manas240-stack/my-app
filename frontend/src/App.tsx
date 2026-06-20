@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
+import Login from "./components/Login";
 import LandingPage from "./components/LandingPage";
 import DoctorSearch from "./components/DoctorSearch";
 import DoctorDetails from "./components/DoctorDetails";
@@ -34,7 +35,6 @@ interface Doctor {
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<Page>("landing");
-  const [currentPage, setCurrentPage] = useState<Page>("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
@@ -49,6 +49,16 @@ export default function App() {
     setSelectedDoctor(null);
   };
 
+  // Landing Page
+  if (currentPage === "landing") {
+    return (
+      <LandingPage
+        onGetStarted={() => setCurrentPage("login")}
+      />
+    );
+  }
+
+  // Login Page
   if (!isLoggedIn) {
     return <Login onSuccess={handleLogin} />;
   }
