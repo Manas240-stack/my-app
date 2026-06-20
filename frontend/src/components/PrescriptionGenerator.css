@@ -1,0 +1,41 @@
+.prescription-page {
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.prescription-card {
+  width: 700px;
+  background: white;
+  border-radius: 28px;
+  padding: 36px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.prescription-card h1 {
+  margin-bottom: 28px;
+}
+
+.prescription-card input,
+.prescription-card textarea {
+  width: 100%;
+  padding: 18px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  border: 1px solid #cbd5e1;
+}
+
+.prescription-card textarea {
+  min-height: 160px;
+  resize: none;
+}
+
+.prescription-card button {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg,#14b8a6,#2563eb);
+  color: white;
+  font-weight: 700;
+}
