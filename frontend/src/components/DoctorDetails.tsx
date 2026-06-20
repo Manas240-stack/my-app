@@ -10,7 +10,7 @@ export default function DoctorDetails({ doctor, onBooking }: { doctor: any; onBo
     const fetchSlots = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://my-app-production-ac5b.up.railway.app/api/v1/doctors/${doctor.id}/slots`);
+        const response = await fetch(`https://my-app-production-ac5b.up.railway.app/api/v1/doctors/${doctor.id}/slots`);
         const data = await response.json();
         setSlots(data.slots || []);
       } catch (error) {
@@ -29,7 +29,7 @@ export default function DoctorDetails({ doctor, onBooking }: { doctor: any; onBo
     }
 
     try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/consultations', {
+      const response = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/consultations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
