@@ -2,7 +2,7 @@ import { useState } from "react";
 import { authAPI } from "../api";
 import "./Login.css";
 
-export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
+export default function Login({ onSuccess }: { onSuccess: () => void }) {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState<"phone" | "otp">("phone");
@@ -81,4 +81,4 @@ export const Login = ({ onSuccess }: { onSuccess: () => void }) => {
       </div>
     </div>
   );
-};
+}
