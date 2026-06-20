@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import './WeightLogging.css';
+import { useEffect, useState } from "react";
+import "./WeightLogging.css";
 
 export default function WeightLogging() {
-  const [weight, setWeight] = useState('');
-  const [note, setNote] = useState('');
+  const [weight, setWeight] = useState("");
+  const [note, setNote] = useState("");
   const [logs, setLogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -14,95 +14,71 @@ export default function WeightLogging() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs');
+      const response = await fetch(
+        "https://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs"
+      );
       const data = await response.json();
       setLogs(data.logs || []);
     } catch (error) {
-      console.error('Error fetching logs:', error);
+      console.error(error);
     }
     setLoading(false);
   };
 
   const handleAddLog = async () => {
-    if (!weight) {
-      alert('Please enter weight');
-      return;
-    }
+    if (!weight) return;
 
-    setLoading(true);
-    try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+    await fetch(
+      "https://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
-          weight_kg: parseFloat(weight),
-          note: note || undefined,
+          weight_kg: Number(weight),
+          note,
         }),
-      });
-
-      if (response.ok) {
-        alert('Weight logged successfully!');
-        setWeight('');
-        setNote('');
-        await fetchLogs();
       }
-    } catch (error) {
-      console.error('Error adding log:', error);
-      alert('Failed to log weight');
-    }
-    setLoading(false);
+    );
+
+    setWeight("");
+    setNote("");
+    fetchLogs();
   };
 
   return (
-    <div className="weight-logging-container">
-      <h2>Weight Logging</h2>
+    <div className="weight-page">
+      <h1>Weight Tracking</h1>
 
-      <div className="log-form">
-        <h3>Log Your Weight</h3>
-        <div className="form-group">
-          <input
-            type="number"
-            step="0.1"
-            placeholder="Weight (kg)"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Notes (optional)"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-          />
-          <button onClick={handleAddLog} disabled={loading}>
-            {loading ? 'Adding...' : 'Add Log'}
-          </button>
+      <div className="weight-form">
+        <input
+          placeholder="Weight (kg)"
+          value={weight}
+          onChange={(e) => setWeight(e.target.value)}
+        />
+
+        <input
+          placeholder="Note"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}
+        />
+
+        <button onClick={handleAddLog}>Add Log</button>
+      </div>
+
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="weight-list">
+          {logs.map((log) => (
+            <div key={log.id} className="weight-card">
+              <h3>{log.weight_kg} kg</h3>
+              <p>{log.note}</p>
+            </div>
+          ))}
         </div>
-      </div>
-
-      <div className="logs-section">
-        <h3>Recent Logs</h3>
-        {logs.length === 0 ? (
-          <p>No weight logs yet</p>
-        ) : (
-          <div className="logs-list">
-            {logs.map((log) => (
-              <div key={log.id} className="log-item">
-                <div className="weight-display">
-                  <span className="weight-value">{log.weight_kg} kg</span>
-                  <span className="log-date">
-                    {new Date(log.logged_at).toLocaleDateString()}
-                  </span>
-                </div>
-                {log.note && <p className="log-note">{log.note}</p>}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <button onClick={fetchLogs} className="refresh-btn">
-        Refresh Logs
-      </button>
+      )}
     </div>
   );
 }
