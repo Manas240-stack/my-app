@@ -1,0 +1,133 @@
+.video-page {
+  display: grid;
+  grid-template-columns: 1.5fr 0.8fr;
+  gap: 24px;
+  padding: 32px;
+  min-height: calc(100vh - 64px);
+}
+
+.video-main {
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #0f172a;
+  min-height: 700px;
+}
+
+.doctor-video {
+  height: 100%;
+  background: linear-gradient(135deg, #111827, #1e293b);
+  position: relative;
+}
+
+.live-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #ef4444;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.video-name {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  color: white;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.patient-video {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 220px;
+  height: 150px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #14b8a6, #2563eb);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+}
+
+.video-name.small {
+  font-size: 16px;
+}
+
+.consult-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.consult-card {
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.consult-card h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.consult-card textarea {
+  width: 100%;
+  min-height: 180px;
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  padding: 16px;
+  resize: none;
+}
+
+.consult-card ul {
+  padding-left: 18px;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.call-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.call-actions button {
+  flex: 1;
+  padding: 16px;
+  border-radius: 18px;
+  border: none;
+  color: white;
+  font-weight: 700;
+}
+
+.mute-btn {
+  background: #64748b;
+}
+
+.camera-btn {
+  background: #2563eb;
+}
+
+.end-btn {
+  background: #ef4444;
+}
+
+@media (max-width: 1100px) {
+  .video-page {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .patient-video {
+    width: 140px;
+    height: 100px;
+  }
+
+  .call-actions {
+    flex-direction: column;
+  }
+}
