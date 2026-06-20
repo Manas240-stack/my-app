@@ -45,7 +45,7 @@ export default function Login({ onSuccess }: LoginProps) {
         setError(result.error?.message || "Invalid OTP");
       }
     } catch (err: any) {
-      setError(err.message || "Failed to verify OTP");
+      setError(err.message || "Verification failed");
     }
 
     setLoading(false);
@@ -54,10 +54,10 @@ export default function Login({ onSuccess }: LoginProps) {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="logo-circle">💊</div>
+        <div className="login-logo">🌿</div>
 
-        <h1>SlimRx</h1>
-        <p>Secure patient portal for consultations & prescriptions</p>
+        <h1>Welcome Back</h1>
+        <p>Login securely to access your patient dashboard</p>
 
         {error && <div className="error-box">{error}</div>}
 
@@ -71,7 +71,7 @@ export default function Login({ onSuccess }: LoginProps) {
             />
 
             <button onClick={handleSendOTP} disabled={loading}>
-              {loading ? "Sending OTP..." : "Send OTP"}
+              {loading ? "Sending..." : "Send OTP"}
             </button>
           </>
         ) : (
@@ -88,7 +88,7 @@ export default function Login({ onSuccess }: LoginProps) {
             </button>
 
             <button
-              className="back-button"
+              className="secondary-btn"
               onClick={() => setStep("phone")}
             >
               Back
