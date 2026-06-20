@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:5000/api/v1";
+const API_BASE_URL = "http://my-app-production-ac5b.up.railway.app/api/v1";
 
 export const authAPI = {
   sendOTP: async (phone: string) => {
