@@ -33,6 +33,7 @@ interface Doctor {
 }
 
 export default function App() {
+  const [currentPage, setCurrentPage] = useState<Page>("landing");
   const [currentPage, setCurrentPage] = useState<Page>("login");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
