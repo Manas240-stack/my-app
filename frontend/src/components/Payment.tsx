@@ -21,7 +21,7 @@ export default function Payment({ onSuccess }: { onSuccess: () => void }) {
   const handlePayment = async () => {
     setLoading(true);
     try {
-      const orderResponse = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/payments/create-order', {
+      const orderResponse = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/payments/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount, type: 'consultation' }),
@@ -38,7 +38,7 @@ export default function Payment({ onSuccess }: { onSuccess: () => void }) {
         description: 'Consultation Booking',
         order_id: razorpayOrderId,
         handler: async function (response: any) {
-          const verifyResponse = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/payments/verify', {
+          const verifyResponse = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/payments/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
