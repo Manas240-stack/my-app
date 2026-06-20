@@ -49,87 +49,70 @@ export default function App() {
     setSelectedDoctor(null);
   };
 
-  // Landing Page
   if (currentPage === "landing") {
-    return (
-      <LandingPage
-        onGetStarted={() => setCurrentPage("login")}
-      />
-    );
+    return <LandingPage onGetStarted={() => setCurrentPage("login")} />;
   }
 
-  // Login Page
   if (!isLoggedIn) {
     return <Login onSuccess={handleLogin} />;
   }
 
   return (
-    <div className="app-container">
-      <nav className="navbar">
-        <div className="navbar-brand">SlimRx</div>
+    <div className="dashboard">
+      {/* Sidebar */}
+      <aside className="sidebar">
+        <h2 className="logo">SlimRx</h2>
 
-        <div className="navbar-menu">
-          <button onClick={() => setCurrentPage("home")}>
-            Doctor Search
-          </button>
+        <button onClick={() => setCurrentPage("home")}>Doctor Search</button>
+        <button onClick={() => setCurrentPage("profile")}>My Profile</button>
+        <button onClick={() => setCurrentPage("consultationHistory")}>
+          Consultations
+        </button>
+        <button onClick={() => setCurrentPage("prescriptions")}>
+          Prescriptions
+        </button>
+        <button onClick={() => setCurrentPage("weight")}>
+          Weight Log
+        </button>
 
-          <button onClick={() => setCurrentPage("profile")}>
-            My Profile
-          </button>
+        <button className="logout-btn" onClick={handleLogout}>
+          Logout
+        </button>
+      </aside>
 
-          <button onClick={() => setCurrentPage("consultationHistory")}>
-            Consultations
-          </button>
+      {/* Main Area */}
+      <div className="content-area">
+        <header className="topbar">
+          <h1>Patient Dashboard</h1>
+        </header>
 
-          <button onClick={() => setCurrentPage("prescriptions")}>
-            Prescriptions
-          </button>
+        <main className="page-content">
+          {currentPage === "home" && (
+            <DoctorSearch
+              onSelectDoctor={(doctor) => {
+                setSelectedDoctor(doctor);
+                setCurrentPage("doctorDetails");
+              }}
+            />
+          )}
 
-          <button onClick={() => setCurrentPage("weight")}>
-            Weight Log
-          </button>
+          {currentPage === "doctorDetails" && selectedDoctor && (
+            <DoctorDetails
+              doctor={selectedDoctor}
+              onBooking={() => setCurrentPage("payment")}
+            />
+          )}
 
-          <button onClick={handleLogout}>
-            Logout
-          </button>
-        </div>
-      </nav>
+          {currentPage === "payment" && (
+            <Payment onSuccess={() => setCurrentPage("home")} />
+          )}
 
-      <main className="main-content">
-        {currentPage === "home" && (
-          <DoctorSearch
-            onSelectDoctor={(doctor) => {
-              setSelectedDoctor(doctor);
-              setCurrentPage("doctorDetails");
-            }}
-          />
-        )}
-
-        {currentPage === "doctorDetails" && selectedDoctor && (
-          <DoctorDetails
-            doctor={selectedDoctor}
-            onBooking={() => setCurrentPage("payment")}
-          />
-        )}
-
-        {currentPage === "payment" && (
-          <Payment onSuccess={() => setCurrentPage("home")} />
-        )}
-
-        {currentPage === "profile" && <PatientProfile />}
-
-        {currentPage === "consultationHistory" && (
-          <ConsultationHistory />
-        )}
-
-        {currentPage === "prescriptions" && (
-          <PrescriptionsOrders />
-        )}
-
-        {currentPage === "weight" && (
-          <WeightLogging />
-        )}
-      </main>
+          {currentPage === "profile" && <PatientProfile />}
+          {currentPage === "consultationHistory" && <ConsultationHistory />}
+          {currentPage === "prescriptions" && <PrescriptionsOrders />}
+          {currentPage === "weight" && <WeightLogging />}
+        </main>
+      </div>
     </div>
   );
 }
