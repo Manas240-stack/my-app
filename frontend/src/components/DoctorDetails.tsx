@@ -1,87 +1,55 @@
-import { useState, useEffect } from 'react';
-import './DoctorDetails.css';
+import { useEffect, useState } from "react";
+import "./DoctorDetails.css";
 
-export default function DoctorDetails({ doctor, onBooking }: { doctor: any; onBooking: () => void }) {
+export default function DoctorDetails({
+  doctor,
+  onBooking,
+}: any) {
   const [slots, setSlots] = useState<string[]>([]);
-  const [selectedSlot, setSelectedSlot] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [selectedSlot, setSelectedSlot] = useState("");
 
   useEffect(() => {
-    const fetchSlots = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`https://my-app-production-ac5b.up.railway.app/api/v1/doctors/${doctor.id}/slots`);
-        const data = await response.json();
-        setSlots(data.slots || []);
-      } catch (error) {
-        console.error('Error fetching slots:', error);
-      }
-      setLoading(false);
-    };
-
-    fetchSlots();
-  }, [doctor.id]);
-
-  const handleBook = async () => {
-    if (!selectedSlot) {
-      alert('Please select a slot');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://my-app-production-ac5b.up.railway.app/api/v1/consultations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          doctor_id: doctor.id,
-          scheduled_at: new Date().toISOString(),
-          mode: 'video',
-        }),
-      });
-
-      if (response.ok) {
-        onBooking();
-      }
-    } catch (error) {
-      console.error('Error booking:', error);
-    }
-  };
+    fetch(
+      `https://my-app-production-ac5b.up.railway.app/api/v1/doctors/${doctor.id}/slots`
+    )
+      .then((r) => r.json())
+      .then((d) => setSlots(d.slots || []));
+  }, [doctor]);
 
   return (
-    <div className="doctor-details-container">
-      <div className="doctor-info">
-        <h2>{doctor.name}</h2>
+    <div className="doctor-details-page">
+      <div className="profile-card">
+        <h1>{doctor.name}</h1>
         <p>{doctor.specialty}</p>
-        <p>Experience: {doctor.experience_years} years</p>
-        <p>Rating: {doctor.rating} ⭐ ({doctor.total_reviews} reviews)</p>
-        <p>Fee: ₹{doctor.consult_fee}</p>
-        <p>Bio: {doctor.bio}</p>
+
+        <div className="meta-grid">
+          <div>{doctor.rating} ⭐</div>
+          <div>{doctor.experience_years} yrs</div>
+          <div>Video Consultation</div>
+        </div>
+
+        <p>{doctor.bio}</p>
       </div>
 
-      <div className="booking-section">
-        <h3>Select a Time Slot</h3>
-        {loading ? (
-          <p>Loading slots...</p>
-        ) : (
-          <>
-            <div className="slots-grid">
-              {slots.map((slot) => (
-                <button
-                  key={slot}
-                  className={selectedSlot === slot ? 'slot active' : 'slot'}
-                  onClick={() => setSelectedSlot(slot)}
-                >
-                  {slot}
-                </button>
-              ))}
-            </div>
+      <div className="slots-card">
+        <h2>Select Consultation Slot</h2>
 
-            {selectedSlot && (
-              <button className="book-btn" onClick={handleBook}>
-                Book Consultation - ₹{doctor.consult_fee}
-              </button>
-            )}
-          </>
+        <div className="slots-grid">
+          {slots.map((slot: string) => (
+            <button
+              key={slot}
+              className={selectedSlot === slot ? "slot active" : "slot"}
+              onClick={() => setSelectedSlot(slot)}
+            >
+              {slot}
+            </button>
+          ))}
+        </div>
+
+        {selectedSlot && (
+          <button className="book-btn" onClick={onBooking}>
+            Continue to Payment
+          </button>
         )}
       </div>
     </div>
