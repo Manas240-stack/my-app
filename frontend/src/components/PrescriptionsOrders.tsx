@@ -1,28 +1,28 @@
-import { useState, useEffect } from 'react';
-import './PrescriptionsOrders.css';
+import { useEffect, useState } from "react";
+import "./PrescriptionsOrders.css";
 
 export default function PrescriptionsOrders() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState('prescriptions');
+  const [activeTab, setActiveTab] = useState("prescriptions");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (activeTab === 'prescriptions') {
-      fetchPrescriptions();
-    } else {
-      fetchOrders();
-    }
+    activeTab === "prescriptions"
+      ? fetchPrescriptions()
+      : fetchOrders();
   }, [activeTab]);
 
   const fetchPrescriptions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/prescriptions');
+      const response = await fetch(
+        "https://my-app-production-ac5b.up.railway.app/api/v1/patients/prescriptions"
+      );
       const data = await response.json();
       setPrescriptions(data.prescriptions || []);
     } catch (error) {
-      console.error('Error fetching prescriptions:', error);
+      console.error(error);
     }
     setLoading(false);
   };
@@ -30,29 +30,32 @@ export default function PrescriptionsOrders() {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/orders');
+      const response = await fetch(
+        "https://my-app-production-ac5b.up.railway.app/api/v1/patients/orders"
+      );
       const data = await response.json();
       setOrders(data.orders || []);
     } catch (error) {
-      console.error('Error fetching orders:', error);
+      console.error(error);
     }
     setLoading(false);
   };
 
   return (
-    <div className="prescriptions-container">
-      <h2>Prescriptions & Orders</h2>
+    <div className="prescription-page">
+      <h1>Prescriptions & Orders</h1>
 
       <div className="tabs">
         <button
-          className={activeTab === 'prescriptions' ? 'tab active' : 'tab'}
-          onClick={() => setActiveTab('prescriptions')}
+          className={activeTab === "prescriptions" ? "active" : ""}
+          onClick={() => setActiveTab("prescriptions")}
         >
           Prescriptions
         </button>
+
         <button
-          className={activeTab === 'orders' ? 'tab active' : 'tab'}
-          onClick={() => setActiveTab('orders')}
+          className={activeTab === "orders" ? "active" : ""}
+          onClick={() => setActiveTab("orders")}
         >
           Orders
         </button>
@@ -60,36 +63,18 @@ export default function PrescriptionsOrders() {
 
       {loading ? (
         <p>Loading...</p>
-      ) : activeTab === 'prescriptions' ? (
-        prescriptions.length === 0 ? (
-          <p>No prescriptions</p>
-        ) : (
-          <div className="items-list">
-            {prescriptions.map((prescription) => (
-              <div key={prescription.id} className="item-card">
-                <h3>Prescription #{prescription.id}</h3>
-                <p><strong>Doctor:</strong> {prescription.doctor_id}</p>
-                <p><strong>Date:</strong> {new Date(prescription.created_at).toLocaleDateString()}</p>
-                <p><strong>Status:</strong> {prescription.status}</p>
-              </div>
-            ))}
+      ) : activeTab === "prescriptions" ? (
+        prescriptions.map((item) => (
+          <div key={item.id} className="item-card">
+            Prescription #{item.id}
           </div>
-        )
+        ))
       ) : (
-        orders.length === 0 ? (
-          <p>No orders</p>
-        ) : (
-          <div className="items-list">
-            {orders.map((order) => (
-              <div key={order.id} className="item-card">
-                <h3>Order #{order.id}</h3>
-                <p><strong>Total:</strong> ₹{order.total}</p>
-                <p><strong>Status:</strong> {order.status}</p>
-                <p><strong>Date:</strong> {new Date(order.created_at).toLocaleDateString()}</p>
-              </div>
-            ))}
+        orders.map((item) => (
+          <div key={item.id} className="item-card">
+            Order #{item.id}
           </div>
-        )
+        ))
       )}
     </div>
   );
