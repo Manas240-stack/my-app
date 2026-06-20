@@ -1,0 +1,82 @@
+.doctor-dashboard-page {
+  padding: 40px;
+}
+
+.doctor-header h1 {
+  font-size: 38px;
+  margin-bottom: 8px;
+}
+
+.doctor-header p {
+  color: #64748b;
+  margin-bottom: 32px;
+}
+
+.doctor-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.doctor-metric-card {
+  background: white;
+  padding: 28px;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.doctor-metric-card h4 {
+  color: #64748b;
+  margin-bottom: 14px;
+}
+
+.doctor-metric-card h2 {
+  font-size: 34px;
+}
+
+.appointment-list {
+  background: white;
+  padding: 28px;
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+}
+
+.appointment-list h2 {
+  margin-bottom: 24px;
+}
+
+.appointment-card {
+  display: flex;
+  justify-content: space-between;
+  padding: 22px;
+  border-radius: 20px;
+  background: #f8fafc;
+  margin-bottom: 18px;
+}
+
+.appointment-right {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.appointment-right button {
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#14b8a6,#2563eb);
+  color: white;
+  font-weight: 700;
+}
+
+@media (max-width: 900px) {
+  .doctor-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .appointment-card {
+    flex-direction: column;
+    gap: 16px;
+  }
+}
