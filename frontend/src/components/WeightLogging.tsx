@@ -14,7 +14,7 @@ export default function WeightLogging() {
   const fetchLogs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/weight-logs');
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs');
       const data = await response.json();
       setLogs(data.logs || []);
     } catch (error) {
@@ -31,7 +31,7 @@ export default function WeightLogging() {
 
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/v1/patients/weight-logs', {
+      const response = await fetch('http://my-app-production-ac5b.up.railway.app/api/v1/patients/weight-logs', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
