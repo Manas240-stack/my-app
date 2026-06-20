@@ -11,6 +11,7 @@ import PrescriptionsOrders from "./components/PrescriptionsOrders";
 import WeightLogging from "./components/WeightLogging";
 
 type Page =
+  | "landing"
   | "login"
   | "home"
   | "doctorDetails"
