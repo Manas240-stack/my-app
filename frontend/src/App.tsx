@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./App.css";
 
-import Login from "./components/login";
+import Login from "./components/Login";
 import DoctorSearch from "./components/DoctorSearch";
 import DoctorDetails from "./components/DoctorDetails";
 import Payment from "./components/Payment";
