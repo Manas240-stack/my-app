@@ -21,7 +21,8 @@ export default function Payment({
 
   useEffect(() => {
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src =
+      "https://checkout.razorpay.com/v1/checkout.js";
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -33,19 +34,33 @@ export default function Payment({
       return;
     }
 
-    setLoading(true);
-
     try {
-      const orderResponse = await fetch(
+      setLoading(true);
+
+      const response = await fetch(
         "https://my-app-production-ac5b.up.railway.app/api/v1/payments/create-order",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            amount,
+            type: "consultation",
+          }),
         }
       );
 
-      const orderData = await orderResponse.json();
+      const data = await response.json();
+      console.log("Order response:", data);
+
+      if (!data.razorpay_order_id) {
+        alert(
+          data?.error?.message ||
+            "Failed to create payment order"
+        );
+        return;
+      }
 
       const options = {
         key: "rzp_test_T38FWB5aedEKc",
@@ -53,46 +68,87 @@ export default function Payment({
         currency: "INR",
         name: "MedVeda",
         description: "Healthcare Consultation",
-        order_id: orderData.razorpay_order_id,
-        handler: function () {
+        order_id: data.razorpay_order_id,
+
+        handler: function (response: any) {
+          console.log("Payment success:", response);
           alert("Payment Successful");
           onSuccess();
+        },
+
+        prefill: {
+          name: "Patient",
+          contact: "9999999999",
+        },
+
+        theme: {
+          color: "#14b8a6",
         },
       };
 
       const rzp = new window.Razorpay(options);
+
+      rzp.on(
+        "payment.failed",
+        function (response: any) {
+          console.log(
+            "Payment failed:",
+            response.error
+          );
+          alert(
+            response.error.description ||
+              "Payment Failed"
+          );
+        }
+      );
+
       rzp.open();
     } catch (error) {
-      console.error(error);
+      console.error("Payment error:", error);
       alert("Payment failed");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
     <div className="payment-page">
       <div className="payment-left">
         <h1>Complete Checkout</h1>
-        <p>Secure payment for consultation & treatment plan</p>
+        <p>
+          Secure payment for consultation &
+          treatment plan
+        </p>
 
         <div className="payment-methods">
           <button
-            className={method === "upi" ? "method active" : "method"}
+            className={
+              method === "upi"
+                ? "method active"
+                : "method"
+            }
             onClick={() => setMethod("upi")}
           >
             UPI
           </button>
 
           <button
-            className={method === "card" ? "method active" : "method"}
+            className={
+              method === "card"
+                ? "method active"
+                : "method"
+            }
             onClick={() => setMethod("card")}
           >
             Card
           </button>
 
           <button
-            className={method === "cod" ? "method active" : "method"}
+            className={
+              method === "cod"
+                ? "method active"
+                : "method"
+            }
             onClick={() => setMethod("cod")}
           >
             COD
@@ -104,7 +160,9 @@ export default function Payment({
           disabled={loading}
           onClick={handlePayment}
         >
-          {loading ? "Processing..." : "Pay Securely"}
+          {loading
+            ? "Processing..."
+            : "Pay Securely"}
         </button>
       </div>
 
