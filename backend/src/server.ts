@@ -17,9 +17,18 @@ app.register(fastifyCors, {
 });
 
 // Initialize Razorpay
+if (
+  !process.env.RAZORPAY_KEY_ID ||
+  !process.env.RAZORPAY_KEY_SECRET
+) {
+  throw new Error(
+    "Missing Razorpay environment variables"
+  );
+}
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_1234567890abcdef",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "test_secret_1234567890abcdef",
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 console.log("✅ Razorpay initialized with Key ID:", process.env.RAZORPAY_KEY_ID);
